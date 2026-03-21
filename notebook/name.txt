@@ -1,0 +1,18 @@
+id: student_id,
+gender: gender,
+age: age,
+city: city, -> kiểm tra xem biến phân loại bao nhiêu
+profession: profession, -> kiểm tra xem biến phân loại bao nhiêu
+academic_pressure: áp lực học tập
+work_pressure: áp lực công việc
+financial_stress: áp lực tài chính
+cgpa: điểm trung bình tích lũy
+study_satisfaction: mức độ hài lòng với việc học
+job_satisfaction: mức độ hài lòng với công việc
+sleep_duration: thời gian ngủ
+dietary_habits: thói quen ăn uống
+degree: bằng cấp
+have_you_ever_had_suicidal_thoughts: bạn đã từng có ý định tự tử chưa
+work/study_hours: số giờ làm việc/học tập
+family_history_of_mental_illness: tiền sử bệnh tâm thần trong gia đình
+depression: 1-0

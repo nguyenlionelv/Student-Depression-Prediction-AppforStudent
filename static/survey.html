@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindCheck – Khảo sát sức khỏe tâm thần</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    .survey-wrap {
+      max-width: 760px;
+      margin: 2.5rem auto;
+      padding: 0 1.2rem 4rem;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .page-header h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: .5rem;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+    }
+
+    /* Step pills */
+    .steps {
+      display: flex;
+      justify-content: center;
+      gap: .5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .step-pill {
+      padding: .3rem .9rem;
+      border-radius: 20px;
+      font-size: .82rem;
+      font-weight: 700;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .step-pill.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .step-pill.done {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      border-color: var(--accent);
+    }
+
+    /* Form card */
+    .form-card {
+      padding: 2.2rem 2rem;
+    }
+
+    @media (max-width: 520px) {
+      .form-card {
+        padding: 1.4rem 1rem;
+      }
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: .8rem;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .section-header .icon {
+      font-size: 1.5rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    /* Form grid */
+    .form-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 1.3rem;
+    }
+
+    /* Pill radio (Yes/No) */
+    .pill-group {
+      display: flex;
+      gap: .6rem;
+    }
+
+    .pill-radio {
+      display: none;
+    }
+
+    .pill-label {
+      padding: .5rem 1.3rem;
+      border-radius: 20px;
+      border: 2px solid var(--border);
+      background: var(--surface2);
+      font-weight: 700;
+      font-size: .92rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: var(--transition);
+    }
+
+    .pill-radio:checked+.pill-label {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    /* Nav buttons */
+    .form-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─── Result card ──────────────────────────────────────────────────── */
+    #result-section {
+      display: none;
+    }
+
+    .result-card {
+      padding: 2.5rem 2rem;
+    }
+
+    .result-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .result-header .emoji {
+      font-size: 3.5rem;
+      margin-bottom: .5rem;
+    }
+
+    .result-header h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: .7rem;
+    }
+
+    .prob-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: .4rem;
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .prob-value {
+      color: var(--primary);
+    }
+
+    .factors-list {
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+      margin-top: .8rem;
+    }
+
+    .recs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+    }
+
+    .recs-list li {
+      background: var(--primary-light);
+      border-radius: var(--radius-sm);
+      padding: .65rem 1rem;
+      font-size: .92rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+
+    .disclaimer {
+      background: #fff8e1;
+      border: 1px solid #f9d56e;
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      font-size: .85rem;
+      color: #856404;
+      margin-top: 1.5rem;
+    }
+
+    /* Loading overlay */
+    #loading {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(240, 244, 240, .75);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    #loading p {
+      font-weight: 700;
+      color: var(--primary);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-logo"><span class="leaf">🌿</span> MindCheck</div>
+    <div class="nav-links">
+      <a href="/">Trang chủ</a>
+      <a href="/survey" class="active">Khảo sát</a>
+    </div>
+  </nav>
+
+  <!-- Loading overlay -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p>Đang phân tích kết quả...</p>
+  </div>
+
+  <div class="survey-wrap">
+    <div class="page-header fade-up">
+      <h1>📋 Khảo sát sức khỏe tâm thần</h1>
+      <p>Trả lời 14 câu hỏi để nhận đánh giá cá nhân hóa từ AI</p>
+    </div>
+
+    <!-- Step pills -->
+    <div class="steps">
+      <span class="step-pill active" id="pill-1">1. Cá nhân</span>
+      <span class="step-pill" id="pill-2">2. Học tập &amp; Công việc</span>
+      <span class="step-pill" id="pill-3">3. Cuộc sống</span>
+      <span class="step-pill" id="pill-4">4. Kết quả</span>
+    </div>
+
+    <!-- ── FORM ───────────────────────────────────────────────────────── -->
+    <form id="survey-form" novalidate>
+
+      <!-- Step 1: Personal info -->
+      <div class="card form-card fade-up" id="step-1">
+        <div class="section-header">
+          <span class="icon">👤</span>
+          <h2>Thông tin cá nhân</h2>
+        </div>
+        <div class="form-rows">
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Giới tính <span class="required">*</span></label>
+              <select name="gender" required>
+                <option value="">-- Chọn --</option>
+                <option value="Male">Nam</option>
+                <option value="Female">Nữ</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tuổi <span class="required">*</span></label>
+              <input type="number" name="age" min="15" max="50" placeholder="VD: 22" required />
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Bậc học <span class="required">*</span></label>
+              <select name="degree" required>
+                <option value="">-- Chọn --</option>
+                <option value="HSC">THPT (HSC)</option>
+                <option value="B.Tech">Đại học – Kỹ thuật (B.Tech/BE)</option>
+                <option value="BSc">Đại học – Khoa học (BSc)</option>
+                <option value="BCA">Đại học – CNTT (BCA/BBA)</option>
+                <option value="MBA">Thạc sĩ – Quản trị (MBA)</option>
+                <option value="MSc">Thạc sĩ – Khoa học (MSc)</option>
+                <option value="PhD">Tiến sĩ (PhD)</option>
+                <option value="Others">Khác</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Điểm GPA (thang 10) <span class="required">*</span></label>
+              <input type="number" name="cgpa" min="0" max="10" step="0.1" placeholder="VD: 7.5" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Tiền sử gia đình về sức khỏe tâm thần <span class="required">*</span></label>
+            <div class="hint">Trong gia đình có ai từng được chẩn đoán trầm cảm / lo âu không?</div>
+            <div class="pill-group">
+              <input type="radio" class="pill-radio" name="family_history" id="fh-no" value="No" required />
+              <label class="pill-label" for="fh-no">Không</label>
+              <input type="radio" class="pill-radio" name="family_history" id="fh-yes" value="Yes" />
+              <label class="pill-label" for="fh-yes">Có</label>
+            </div>
+          </div>
+
+        </div>
+        <div class="form-nav">
+          <span></span>
+          <button type="button" class="btn btn-primary" onclick="nextStep(1)">Tiếp theo →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Study & Work -->
+      <div class="card form-card fade-up" id="step-2" style="display:none">
+        <div class="section-header">
+          <span class="icon">📚</span>
+          <h2>Học tập &amp; Công việc</h2>
+        </div>
+        <div class="form-rows">
+
+          <div class="form-group">
+            <label>Áp lực học tập <span class="required">*</span></label>
+            <div class="hint">1 = Rất thấp &nbsp;|&nbsp; 5 = Rất cao</div>
+            <div class="scale-group" data-name="academic_pressure">
+              <button type="button" class="scale-btn" data-val="1">1</button>
+              <button type="button" class="scale-btn" data-val="2">2</button>
+              <button type="button" class="scale-btn" data-val="3">3</button>
+              <button type="button" class="scale-btn" data-val="4">4</button>
+              <button type="button" class="scale-btn" data-val="5">5</button>
+            </div>
+            <input type="hidden" name="academic_pressure" required />
+          </div>
+
+          <div class="form-group">
+            <label>Mức hài lòng với việc học <span class="required">*</span></label>
+            <div class="hint">1 = Rất không hài lòng &nbsp;|&nbsp; 5 = Rất hài lòng</div>
+            <div class="scale-group" data-name="study_satisfaction">
+              <button type="button" class="scale-btn" data-val="1">1</button>
+              <button type="button" class="scale-btn" data-val="2">2</button>
+              <button type="button" class="scale-btn" data-val="3">3</button>
+              <button type="button" class="scale-btn" data-val="4">4</button>
+              <button type="button" class="scale-btn" data-val="5">5</button>
+            </div>
+            <input type="hidden" name="study_satisfaction" required />
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Áp lực công việc / thực tập</label>
+              <div class="hint">0 = Không có việc làm</div>
+              <div class="scale-group" data-name="work_pressure">
+                <button type="button" class="scale-btn" data-val="0">0</button>
+                <button type="button" class="scale-btn" data-val="1">1</button>
+                <button type="button" class="scale-btn" data-val="2">2</button>
+                <button type="button" class="scale-btn" data-val="3">3</button>
+                <button type="button" class="scale-btn" data-val="4">4</button>
+                <button type="button" class="scale-btn" data-val="5">5</button>
+              </div>
+              <input type="hidden" name="work_pressure" value="0" />
+            </div>
+            <div class="form-group">
+              <label>Mức hài lòng với công việc</label>
+              <div class="hint">0 = Không đi làm</div>
+              <div class="scale-group" data-name="job_satisfaction">
+                <button type="button" class="scale-btn" data-val="0">0</button>
+                <button type="button" class="scale-btn" data-val="1">1</button>
+                <button type="button" class="scale-btn" data-val="2">2</button>
+                <button type="button" class="scale-btn" data-val="3">3</button>
+                <button type="button" class="scale-btn" data-val="4">4</button>
+                <button type="button" class="scale-btn" data-val="5">5</button>
+              </div>
+              <input type="hidden" name="job_satisfaction" value="0" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Số giờ học / làm mỗi ngày <span class="required">*</span></label>
+            <input type="number" name="work_study_hours" min="0" max="20" step="0.5" placeholder="VD: 6" required />
+          </div>
+
+        </div>
+        <div class="form-nav">
+          <button type="button" class="btn btn-outline" onclick="prevStep(2)">← Quay lại</button>
+          <button type="button" class="btn btn-primary" onclick="nextStep(2)">Tiếp theo →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Lifestyle -->
+      <div class="card form-card fade-up" id="step-3" style="display:none">
+        <div class="section-header">
+          <span class="icon">🌙</span>
+          <h2>Lối sống &amp; Sức khỏe</h2>
+        </div>
+        <div class="form-rows">
+
+          <div class="form-group">
+            <label>Thời gian ngủ trung bình <span class="required">*</span></label>
+            <select name="sleep_duration" required>
+              <option value="">-- Chọn --</option>
+              <option value="Less than 5 hours">Dưới 5 tiếng</option>
+              <option value="5-6 hours">5–6 tiếng</option>
+              <option value="7-8 hours">7–8 tiếng</option>
+              <option value="More than 8 hours">Trên 8 tiếng</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Chế độ ăn uống <span class="required">*</span></label>
+            <select name="dietary_habits" required>
+              <option value="">-- Chọn --</option>
+              <option value="Healthy">Lành mạnh (nhiều rau, ít đồ ăn nhanh)</option>
+              <option value="Moderate">Bình thường</option>
+              <option value="Unhealthy">Không lành mạnh (nhiều đồ ăn nhanh)</option>
+              <option value="Others">Khác</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Áp lực tài chính <span class="required">*</span></label>
+            <div class="hint">1 = Không lo &nbsp;|&nbsp; 5 = Lo lắng rất nhiều</div>
+            <div class="scale-group" data-name="financial_stress">
+              <button type="button" class="scale-btn" data-val="1">1</button>
+              <button type="button" class="scale-btn" data-val="2">2</button>
+              <button type="button" class="scale-btn" data-val="3">3</button>
+              <button type="button" class="scale-btn" data-val="4">4</button>
+              <button type="button" class="scale-btn" data-val="5">5</button>
+            </div>
+            <input type="hidden" name="financial_stress" required />
+          </div>
+
+          <div class="form-group">
+            <label>Bạn có từng có suy nghĩ tiêu cực về bản thân không? <span class="required">*</span></label>
+            <div class="hint">Thông tin hoàn toàn được bảo mật và chỉ dùng cho mô hình AI</div>
+            <div class="pill-group">
+              <input type="radio" class="pill-radio" name="suicidal_thoughts" id="st-no" value="No" required />
+              <label class="pill-label" for="st-no">Không</label>
+              <input type="radio" class="pill-radio" name="suicidal_thoughts" id="st-yes" value="Yes" />
+              <label class="pill-label" for="st-yes">Có</label>
+            </div>
+          </div>
+
+        </div>
+        <div class="form-nav">
+          <button type="button" class="btn btn-outline" onclick="prevStep(3)">← Quay lại</button>
+          <button type="submit" class="btn btn-primary">
+            🔍 Phân tích kết quả
+          </button>
+        </div>
+      </div>
+
+    </form><!-- end form -->
+
+    <!-- ── RESULT SECTION ──────────────────────────────────────────────── -->
+    <div id="result-section" class="fade-up">
+      <div class="card result-card">
+
+        <div class="result-header">
+          <div class="emoji" id="result-emoji">🧠</div>
+          <h2>Kết quả đánh giá của bạn</h2>
+          <div id="result-badge" class="risk-badge"></div>
+        </div>
+
+        <!-- Probability bar -->
+        <div style="margin-bottom:1.8rem">
+          <div class="prob-label">
+            <span>Xác suất nguy cơ trầm cảm</span>
+            <span class="prob-value" id="prob-text">—</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="prob-bar" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Explanation -->
+        <div style="margin-bottom:1.8rem">
+          <div style="font-weight:800;margin-bottom:.6rem;font-size:1rem;">Phân tích</div>
+          <div id="explanation-text" style="font-size:.95rem;color:var(--text);line-height:1.8"></div>
+        </div>
+
+        <!-- Top factors
+        <div style="margin-bottom:1.8rem">
+          <div style="font-weight:800;margin-bottom:.8rem;font-size:1rem;">Các yếu tố ảnh hưởng chính</div>
+          <div class="factors-list" id="factors-list"></div>
+        </div> -->
+
+        <!-- Recommendations -->
+        <div>
+          <div style="font-weight:800;margin-bottom:.8rem;font-size:1rem;">Gợi ý hành động</div>
+          <ul class="recs-list" id="recs-list"></ul>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+          ⚠️ <strong>Lưu ý:</strong> Đây là công cụ hỗ trợ, KHÔNG phải chẩn đoán y tế.
+          Nếu bạn lo lắng về sức khỏe tâm thần, hãy tham khảo ý kiến chuyên gia.
+          Đường dây hỗ trợ: <strong>1800 599 920</strong> (miễn phí, 24/7).
+        </div>
+
+        <div class="form-nav" style="margin-top:1.5rem">
+          <button class="btn btn-outline" onclick="resetForm()">← Làm lại</button>
+          <button class="btn btn-primary" onclick="window.print()">In kết quả</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end survey-wrap -->
+
+  <script src="/static/app.js"></script>
+</body>
+
+</html>

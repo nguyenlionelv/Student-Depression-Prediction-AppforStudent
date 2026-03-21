@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindCheck – Kiểm tra sức khỏe tâm thần sinh viên</title>
+  <meta name="description" content="Công cụ đánh giá nguy cơ trầm cảm cho sinh viên dựa trên AI." />
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    /* ── Hero ─────────────────────────────────────────────────────────── */
+    .hero {
+      min-height: calc(100vh - 64px);
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, #f0f7f3 0%, #e2f0e8 60%, #f5f0e8 100%);
+      padding: 4rem 2rem;
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .hero-img {
+        display: none;
+      }
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      padding: .3rem .9rem;
+      border-radius: 20px;
+      font-size: .85rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.9rem, 4vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.25;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 span {
+      color: var(--primary);
+    }
+
+    .hero p {
+      font-size: 1.08rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      max-width: 480px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-img-wrap {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-blob {
+      width: 340px;
+      height: 340px;
+      border-radius: 60% 40% 55% 45% / 50% 60% 40% 55%;
+      background: linear-gradient(135deg, #c8ead9, #a8d5be);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8rem;
+      animation: blob 8s ease-in-out infinite alternate;
+      box-shadow: var(--shadow-lg);
+    }
+
+    @keyframes blob {
+      from {
+        border-radius: 60% 40% 55% 45% / 50% 60% 40% 55%;
+      }
+
+      to {
+        border-radius: 40% 60% 45% 55% / 60% 40% 55% 45%;
+      }
+    }
+
+    /* ── Stats strip ──────────────────────────────────────────────────── */
+    .stats-strip {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 1.8rem 2rem;
+    }
+
+    .stats-inner {
+      max-width: 900px;
+      margin: auto;
+      display: flex;
+      justify-content: space-around;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: .88rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* ── Info section ────────────────────────────────────────────────── */
+    .info-section {
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .section-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: .5rem;
+    }
+
+    .section-sub {
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+    }
+
+    .cards-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .cards-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .info-card {
+      padding: 1.8rem 1.5rem;
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      transition: transform var(--transition);
+    }
+
+    .info-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .info-card .icon {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-card h3 {
+      font-weight: 800;
+      margin-bottom: .5rem;
+      font-size: 1.05rem;
+    }
+
+    .info-card p {
+      font-size: .92rem;
+      color: var(--text-muted);
+    }
+
+    /* ── CTA banner ──────────────────────────────────────────────────── */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      padding: 4rem 2rem;
+      text-align: center;
+      color: #fff;
+    }
+
+    .cta-banner h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: .8rem;
+    }
+
+    .cta-banner p {
+      margin-bottom: 2rem;
+      opacity: .88;
+    }
+
+    .btn-white {
+      background: #fff;
+      color: var(--primary-dark) !important;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, .15);
+    }
+
+    .btn-white:hover {
+      background: #f0fff6;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────────────── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: .88rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-logo"><span class="leaf">🌿</span> MindCheck</div>
+    <div class="nav-links">
+      <a href="/" class="active">Trang chủ</a>
+      <a href="/survey" class="btn-nav">Bắt đầu kiểm tra</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-text fade-up">
+        <div class="hero-tag">🤖 Powered by AI &amp; SHAP</div>
+        <h1>Hiểu về <span>sức khỏe tâm thần</span> của bạn</h1>
+        <p>
+          MindCheck giúp bạn đánh giá nguy cơ trầm cảm dựa trên các yếu tố học tập
+          và cuộc sống — cùng giải thích rõ ràng từng nguyên nhân bằng AI.
+        </p>
+        <div class="hero-actions">
+          <a href="/survey" class="btn btn-primary btn-lg">
+            🩺 Kiểm tra ngay
+          </a>
+          <a href="#info" class="btn btn-outline btn-lg">Tìm hiểu thêm</a>
+        </div>
+      </div>
+      <div class="hero-img-wrap hero-img fade-up" style="animation-delay:.15s">
+        <div class="hero-blob">🧠</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="stats-strip">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <div class="stat-num">~40%</div>
+        <div class="stat-label">Sinh viên có dấu hiệu lo âu / trầm cảm</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">85%</div>
+        <div class="stat-label">Độ chính xác mô hình AI</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">14 câu</div>
+        <div class="stat-label">Khảo sát nhanh chóng</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">SHAP</div>
+        <div class="stat-label">Giải thích kết quả minh bạch</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info section -->
+  <section class="info-section" id="info">
+    <div class="text-center mb-2">
+      <div class="section-title">Tại sao cần quan tâm đến sức khỏe tâm thần?</div>
+      <div class="section-sub">Trầm cảm ở sinh viên thường bị bỏ qua — nhưng ảnh hưởng rất lớn đến kết quả học tập</div>
+    </div>
+    <div class="cards-3">
+      <div class="info-card fade-up">
+        <div class="icon">📚</div>
+        <h3>Áp lực học tập</h3>
+        <p>Áp lực thi cử, deadline và kỳ vọng cao là nguyên nhân hàng đầu gây căng thẳng tâm lý ở sinh viên.</p>
+      </div>
+      <div class="info-card fade-up" style="animation-delay:.1s">
+        <div class="icon">💰</div>
+        <h3>Tài chính & Tương lai</h3>
+        <p>Lo lắng về tài chính, học phí và triển vọng việc làm tạo ra gánh nặng tâm lý dài hạn.</p>
+      </div>
+      <div class="info-card fade-up" style="animation-delay:.2s">
+        <div class="icon">😴</div>
+        <h3>Thiếu ngủ mãn tính</h3>
+        <p>Ngủ dưới 6 tiếng làm tăng 40% nguy cơ trầm cảm. Giấc ngủ là nền tảng sức khỏe tâm thần.</p>
+      </div>
+      <div class="info-card fade-up" style="animation-delay:.05s">
+        <div class="icon">🤖</div>
+        <h3>Mô hình AI giải thích được</h3>
+        <p>Sử dụng XGBoost + SHAP, công cụ không chỉ dự đoán mà còn nói rõ <em>tại sao</em> kết quả như vậy.</p>
+      </div>
+      <div class="info-card fade-up" style="animation-delay:.15s">
+        <div class="icon">🔒</div>
+        <h3>Bảo mật &amp; Ẩn danh</h3>
+        <p>Thông tin của bạn không được lưu trữ. Mọi dự đoán đều thực hiện trực tiếp trên thiết bị.</p>
+      </div>
+      <div class="info-card fade-up" style="animation-delay:.25s">
+        <div class="icon">💚</div>
+        <h3>Gợi ý hành động</h3>
+        <p>Kết quả đi kèm với các khuyến nghị thực tế, phù hợp với từng yếu tố nguy cơ cá nhân.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA banner -->
+  <div class="cta-banner">
+    <h2>Hãy dành 3 phút cho sức khỏe tâm thần của bạn</h2>
+    <p>Công cụ này không thay thế chẩn đoán y tế — nhưng là bước đầu để bạn hiểu bản thân hơn.</p>
+    <a href="/static/survey.html" class="btn btn-white btn-lg">🩺 Bắt đầu khảo sát</a>
+  </div>
+
+  <footer>
+    <p>🌿 MindCheck — Công cụ hỗ trợ, không thay thế chuyên gia tâm lý.<br>
+      Nếu bạn đang trong tình trạng khẩn cấp, hãy gọi <strong>1800 599 920</strong> (miễn phí, 24/7).</p>
+  </footer>
+
+</body>
+
+</html>
