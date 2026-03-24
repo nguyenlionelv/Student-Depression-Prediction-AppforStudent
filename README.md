@@ -42,7 +42,7 @@ The **Student Depression Prediction App** is an end-to-end Machine Learning proj
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/nguyenlionelv/Student-Depression-Predictation.git
+git clone https://github.com/nguyenlionelv/Student-Depression-Prediction-AppforStudent.git
 ```
 
 ### 2. Install Dependencies
