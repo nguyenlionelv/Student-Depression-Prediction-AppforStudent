@@ -10,7 +10,7 @@ The **Student Depression Predictor API** is an End-to-End Machine Learning proje
 - **Modular Data Pipeline**: Highly reusable Pandas-based preprocessing steps (cleaning, imputation, standardization, feature engineering).
 - **Extensible Architecture**: Clean code following modern Python standards (`argparse`, structured logging, type checking).
 
-## Project Architecture & Tech Stack
+## Architecture & Tech Stack
 - **Backend Framework**: FastAPI, Pydantic, Uvicorn (ASGI)
 - **Machine Learning**: Scikit-Learn, XGBoost, LightGBM, SHAP
 - **Data Engineering**: Pandas, NumPy
@@ -69,6 +69,22 @@ make run
 ```
 - **Web Interface:** Access the frontend application at [http://localhost:8000](http://localhost:8000)
 - **API Documentation Sandbox:** Visit the auto-generated Swagger UI at [http://localhost:8000/docs](http://localhost:8000/docs)
+
+### 5. Running via Docker
+If you do not want to install Python dependencies manually, you can run the entire application (including model training and the API server) inside a Docker container using Docker Compose.
+
+*Note: The Docker build process is optimized. If you have already trained the model locally (`model/model.pkl` exists), Docker will seamlessly use it and skip retraining, saving significant build time.*
+
+**Start the application:**
+```bash
+docker-compose up --build -d
+```
+The API and frontend will be immediately available at `http://localhost:8000`.
+
+**Stop the application:**
+```bash
+docker-compose down
+```
 
 ## REST API Endpoints
 

@@ -1,0 +1,13 @@
+
+services:
+  api:
+    build: .
+    container_name: student-depression-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: >
+      sh -c "echo \"window.RUNTIME_API_BASE = '${API_BASE:-}';\" > static/env.js && uvicorn api.main:app --host 0.0.0.0 --port 8000"

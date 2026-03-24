@@ -9,6 +9,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy everything
 COPY . .
 
+# Train the model only if model.pkl doesn't exist
+RUN if [ ! -f "model/model.pkl" ]; then make train; fi
+
 # Expose API port
 EXPOSE 8000
 
