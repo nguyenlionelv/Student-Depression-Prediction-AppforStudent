@@ -19,8 +19,11 @@ deploy:
 	python -m webbrowser "http://localhost:8000"
 	uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
 
-render_deploy:
+render_build:
 	echo "window.RUNTIME_API_BASE = 'https://student-depression-predictation.onrender.com';" > static/env.js
+	pip install -r requirements.txt
+
+render_start:
 	uvicorn api.main:app --host 0.0.0.0 --port 10000
 
 clean:
