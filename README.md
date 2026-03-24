@@ -25,7 +25,7 @@ The **Student Depression Predictor API** is an End-to-End Machine Learning proje
 │   └── processed               # Auto-generated clean files for modeling
 ├── model                       # Serialized Stacking Classifier and SHAP explainer
 ├── src                         # Core logic and inference
-│   ├── build                   # Modular ML pipeline (train, evaluate, save, pipeline)
+│   ├── pipelines                   # Modular ML pipeline (train, evaluate, save, pipeline)
 │   └── deploy                  # Inference code (predict, schemas, logic_translator)
 ├── tests                       # Unit testing suite
 ├── static                      # Static Web User Interface (HTML/CSS/JS)
