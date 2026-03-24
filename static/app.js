@@ -115,10 +115,8 @@ document.getElementById('survey-form').addEventListener('submit', async (e) => {
   console.log('[MindCheck] Submitting payload:', data);
   showLoading(true);
 
-  // Support both same-origin (port 8000) and cross-origin (VS Code Live Server etc.)
-  const API_BASE = (window.location.port === '8000' || window.location.port === '')
-    ? ''
-    : 'http://localhost:8000';
+  // Support both same-origin and cross-origin via dynamic env.js config
+  const API_BASE = window.RUNTIME_API_BASE || '';
 
   try {
     const res = await fetch(`${API_BASE}/predict`, {
