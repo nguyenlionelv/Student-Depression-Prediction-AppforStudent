@@ -1,7 +1,7 @@
-# Student Depression Predictor
+# Student Depression Prediction App
 
 ## Overview
-The **Student Depression Predictor API** is an End-to-End Machine Learning project designed to predict the risk of depression among university students based on academic, psychological, and demographic factors. Built with **FastAPI** and a powerful **Stacking Ensemble**, this application provides a robust and scalable backend for real-time inference, coupled with **SHAP** (SHapley Additive exPlanations) for model interpretability.
+The **Student Depression Prediction App** is an end-to-end Machine Learning project designed to predict the risk of depression among university students based on academic, psychological, and demographic factors. Built with **FastAPI** and a powerful **Stacking Ensemble**, this application provides a robust and scalable backend for real-time inference, coupled with **SHAP** (SHapley Additive exPlanations) for model interpretability.
 
 ## Key Features
 - **Predictive Analytics**: High-accuracy Stacking Classifier combining Random Forest, XGBoost, and LightGBM for superior predictive performance.
@@ -12,8 +12,8 @@ The **Student Depression Predictor API** is an End-to-End Machine Learning proje
 
 ## Project Architecture & Tech Stack
 - **Backend Framework**: FastAPI, Pydantic, Uvicorn (ASGI)
-- **Machine Learning**: Scikit-Learn, XGBoost, LightGBM, SHAP
-- **Data Engineering**: Pandas, NumPy
+- **Machine Learning**: Scikit-Learn, XGBoost, LightGBM, RF, SHAP
+- **Data Engineering**: Pandas, NumPy, Matplotlib
 - **Persistence**: Joblib
 
 ## Directory Structure
@@ -42,13 +42,16 @@ The **Student Depression Predictor API** is an End-to-End Machine Learning proje
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/student-depression-predictor.git
-cd "student-depression-predictor"
+git clone https://github.com/nguyenlionelv/Student-Depression-Predictation.git
 ```
 
 ### 2. Install Dependencies
 ```bash
 python -m pip install -r requirements.txt
+```
+or
+```bash
+make install
 ```
 
 ### 3. Model Training Pipeline
@@ -67,8 +70,25 @@ Alternatively, if you only want to start the API without opening the browser, us
 ```bash
 make run
 ```
+
+### 5. Running via Docker
+If you do not want to install Python dependencies manually, you can run the entire application (including model training and the API server) inside a Docker container using Docker Compose.
+
+*Note: The Docker build process is optimized. If you have already trained the model locally (`model/model.pkl` exists), Docker will seamlessly use it and skip retraining, saving significant build time.*
+
+**Start the application:**
+```bash
+docker-compose up --build -d
+```
+The API and frontend will be immediately available at `http://localhost:8000`.
+
+**Stop the application:**
+```bash
+docker-compose down
+```
 - **Web Interface:** Access the frontend application at [http://localhost:8000](http://localhost:8000)
 - **API Documentation Sandbox:** Visit the auto-generated Swagger UI at [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Production Web (Render):** https://student-depression-predictation.onrender.com
 
 ## REST API Endpoints
 
@@ -100,4 +120,4 @@ make run
 ```
 
 ## Authors
-- **Bui Trong Nguyen**
+- **Nguyen Bui Trong**
