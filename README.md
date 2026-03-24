@@ -31,6 +31,7 @@ The **Student Depression Prediction App** is an end-to-end Machine Learning proj
 ├── static                      # Static Web User Interface (HTML/CSS/JS)
 ├── Dockerfile                  # Production-ready API deployment descriptor
 ├── Makefile                    # Developer tool commands
+├── docker-compose.yml          # Docker Compose configuration
 └── requirements.txt            # Python dependencies
 ```
 
@@ -38,7 +39,6 @@ The **Student Depression Prediction App** is an end-to-end Machine Learning proj
 
 ### Prerequisites
 - Python 3.9+
-- Recommended: Virtual Environment (`venv` or `conda`)
 
 ### 1. Clone the Repository
 ```bash
@@ -71,21 +71,6 @@ Alternatively, if you only want to start the API without opening the browser, us
 make run
 ```
 
-### 5. Running via Docker
-If you do not want to install Python dependencies manually, you can run the entire application (including model training and the API server) inside a Docker container using Docker Compose.
-
-*Note: The Docker build process is optimized. If you have already trained the model locally (`model/model.pkl` exists), Docker will seamlessly use it and skip retraining, saving significant build time.*
-
-**Start the application:**
-```bash
-docker-compose up --build -d
-```
-The API and frontend will be immediately available at `http://localhost:8000`.
-
-**Stop the application:**
-```bash
-docker-compose down
-```
 - **Web Interface:** Access the frontend application at [http://localhost:8000](http://localhost:8000)
 - **API Documentation Sandbox:** Visit the auto-generated Swagger UI at [http://localhost:8000/docs](http://localhost:8000/docs)
 - **Production Web (Render):** https://student-depression-predictation.onrender.com
@@ -105,6 +90,7 @@ The API and frontend will be immediately available at `http://localhost:8000`.
 ```bash
 docker-compose down
 ```
+
 
 ## REST API Endpoints
 
