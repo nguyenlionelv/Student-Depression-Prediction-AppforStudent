@@ -1,13 +1,26 @@
 
 services:
-  api:
-    build: .
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
     container_name: student-depression-api
     ports:
       - "8000:8000"
     volumes:
       - .:/app
     environment:
-      - PYTHONUNBUFFERED=1
-    command: >
-      sh -c "echo \"window.RUNTIME_API_BASE = '${API_BASE:-}';\" > static/env.js && uvicorn api.main:app --host 0.0.0.0 --port 8000"
+      PYTHONUNBUFFERED: "1"
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: student-depression-web
+    depends_on:
+      - backend
+    ports:
+      - "8001:80"
+    volumes:
+      - ./static:/usr/share/nginx/html
+    environment:
+      - API_BASE=http://localhost:8000

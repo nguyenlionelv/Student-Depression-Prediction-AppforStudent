@@ -1,1 +1,1 @@
-window.RUNTIME_API_BASE = '';
+window.RUNTIME_API_BASE = 'http://localhost:8000';
