@@ -26,41 +26,49 @@ def drop_columns(df: pd.DataFrame) -> pd.DataFrame:
     df = df.drop(columns=drop_cols)
     return df
 
-# def transform_columns(df: pd.DataFrame) -> pd.DataFrame:
-#     df['dietary_habits'] = df['dietary_habits'].replace('Others',df['dietary_habits'].mode()[0])
+def transform_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Handle special string replacements before imputation."""
+    df = df.copy()
+    if 'dietary_habits' in df.columns:
+        if not df['dietary_habits'].mode().empty:
+            df['dietary_habits'] = df['dietary_habits'].replace(['Others', 'Othes'], df['dietary_habits'].mode()[0])
+    return df
 
 def encode_categorical_features(df: pd.DataFrame) -> pd.DataFrame:
     """Encode string categoricals into ordinal/binary integers and dummy variables."""
     df = df.copy()
     
     if "gender" in df.columns:
-        df["gender"] = df["gender"].map({"Male": 1, "Female": 0, "male": 1, "female": 0}).fillna(0).astype(int)
+        df["gender"] = df["gender"].map({"Male": 1, "Female": 0, "male": 1, "female": 0}).fillna(-1).astype(int)
 
     if "sleep_duration" in df.columns:
         sleep_map = {
-            "Less than 5 hours": 0,
-            "5-6 hours": 1,
-            "7-8 hours": 2,
-            "More than 8 hours": 3,
-            "Others": 1,
+            "'Less than 5 hours'": 0, "Less than 5 hours": 0,
+            "'5-6 hours'": 1, "5-6 hours": 1,
+            "'7-8 hours'": 2, "7-8 hours": 2,
+            "'More than 8 hours'": 3, "More than 8 hours": 3,
+            "Others": 4,
         }
-        df["sleep_duration"] = df["sleep_duration"].map(sleep_map).fillna(1).astype(int)
+        df["sleep_duration"] = df["sleep_duration"].map(sleep_map).fillna(-1).astype(int)
 
     if "degree" in df.columns:
         degree_map = {
-            "HSC": 0, "Class 12": 0,
-            "BSc": 1, "B.Com": 1, "B.Ed": 1, "B.Pharm": 1, "B.Tech": 1, "BBA": 1, "BCA": 1, "BE": 1,
-            "MSc": 2, "M.Com": 2, "M.Ed": 2, "M.Pharm": 2, "M.Tech": 2, "MBA": 2, "MCA": 2, "ME": 2, "MHM": 2, "LLM": 2,
-            "PhD": 3,
-            "Others": 1,
+            "'Class 12'": 0, "Class 12": 0,
+            "B.Ed": 1, "B.Com": 1, "B.Arch": 1, "BCA": 1, "B.Tech": 1,
+            "BHM": 1, "BSc": 1, "B.Pharm": 1, "BBA": 1, "MBBS": 1,
+            "LLB": 1, "BE": 1, "BA": 1,
+            "MSc": 2, "MCA": 2, "M.Tech": 2, "M.Ed": 2, "M.Com": 2,
+            "M.Pharm": 2, "MBA": 2, "MA": 2, "MHM": 2, "ME": 2, "LLM": 2,
+            "PhD": 3, "MD": 3,
+            "Others": 4
         }
-        df["degree"] = df["degree"].map(degree_map).fillna(1).astype(int)
+        df["degree"] = df["degree"].map(degree_map).fillna(-1).astype(int)
 
     if "suicidal_thoughts" in df.columns:
-        df["suicidal_thoughts"] = df["suicidal_thoughts"].map({"Yes": 1, "No": 0, "yes": 1, "no": 0}).fillna(0).astype(int)
+        df["suicidal_thoughts"] = df["suicidal_thoughts"].map({"Yes": 1, "No": 0, "yes": 1, "no": 0}).fillna(-1).astype(int)
 
-    if "family_history" in df.columns:
-        df["family_history"] = df["family_history"].map({"Yes": 1, "No": 0, "yes": 1, "no": 0}).fillna(0).astype(int)
+    if "family_history_of_mental_illness" in df.columns:
+        df["family_history_of_mental_illness"] = df["family_history_of_mental_illness"].map({"Yes": 1, "No": 0, "yes": 1, "no": 0}).fillna(-1).astype(int)
 
     if "dietary_habits" in df.columns:
         diet_dummies = pd.get_dummies(df["dietary_habits"], prefix="dietary_habits")
@@ -74,9 +82,10 @@ def encode_categorical_features(df: pd.DataFrame) -> pd.DataFrame:
 
 def coerce_numeric_features(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
+    df = df.replace('?', np.nan)
     numeric_expected = [
         "age", "academic_pressure", "work_pressure", "cgpa",
-        "study_satisfaction", "job_satisfaction", "work_study_hours", "financial_stress",
+        "study_satisfaction", "job_satisfaction", "work_study_hours", "work/study_hours", "financial_stress",
     ]
     for col in numeric_expected:
         if col in df.columns:
@@ -90,11 +99,25 @@ def coerce_numeric_features(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 def handle_missing_values(df: pd.DataFrame) -> pd.DataFrame:
-    """Impute NaNs with column medians for continuous features."""
+    """Impute NaNs with column medians for continuous features and mode for others."""
     df = df.copy()
-    nums = df.select_dtypes(include=[np.number]).columns.tolist()
-    if nums:
-        df[nums] = df[nums].fillna(df[nums].median())
+    
+    num_cols = ["age", "cgpa", "work/study_hours", "work_study_hours"]
+    for col in num_cols:
+        if col in df.columns:
+            df[col] = df[col].fillna(df[col].median())
+            
+    num_cat_cols = ["financial_stress", "academic_pressure", "study_satisfaction", "pressure_satisfaction_gap", "stress_score"]
+    for col in num_cat_cols:
+        if col in df.columns:
+            df[col] = df[col].fillna(df[col].mode()[0])
+            
+    cat_cols = ["gender", "suicidal_thoughts", "family_history_of_mental_illness", "sleep_duration", "degree", "dietary_habits"]
+    for col in cat_cols:
+        if col in df.columns:
+            if not df[col].mode().empty:
+                df[col] = df[col].fillna(df[col].mode()[0])
+                
     return df
 
 def feature_engineering(df: pd.DataFrame) -> pd.DataFrame:
@@ -103,17 +126,8 @@ def feature_engineering(df: pd.DataFrame) -> pd.DataFrame:
     if all(c in df.columns for c in ["academic_pressure", "work_pressure", "financial_stress"]):
         df["stress_score"] = df["academic_pressure"] + df["work_pressure"] + df["financial_stress"]
         
-    if all(c in df.columns for c in ["study_satisfaction", "job_satisfaction"]):
-        df["satisfaction_score"] = df["study_satisfaction"] + df["job_satisfaction"]
-        
     if all(c in df.columns for c in ["academic_pressure", "study_satisfaction"]):
         df["pressure_satisfaction_gap"] = df["academic_pressure"] - df["study_satisfaction"]
-        
-    if all(c in df.columns for c in ["work_study_hours", "sleep_duration"]):
-        df["work_hours_per_sleep"] = df["work_study_hours"] / (df["sleep_duration"] + 1)
-        
-    if all(c in df.columns for c in ["cgpa", "academic_pressure"]):
-        df["cgpa_pressure_ratio"] = df["cgpa"] / (df["academic_pressure"] + 1)
         
     return df
 
@@ -126,9 +140,10 @@ def run_pipeline(data_path: str = DEFAULT_RAW_DATA_PATH, processed_path: str = D
     df = load_data(data_path)
     df = rename_columns(df)
     df = drop_columns(df)
-    df = encode_categorical_features(df)
+    df = transform_columns(df)
     df = coerce_numeric_features(df)
     df = handle_missing_values(df)
+    df = encode_categorical_features(df)
     df = feature_engineering(df)
     
     os.makedirs(os.path.dirname(processed_path), exist_ok=True)
