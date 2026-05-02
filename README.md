@@ -1,8 +1,15 @@
 # Student Depression Prediction App
 
 ## Overview
-The **Student Depression Prediction App** is an end-to-end Machine Learning project designed to predict the risk of depression among university students based on academic, psychological, and demographic factors. Built with **FastAPI** and a powerful **Stacking Ensemble**, this application provides a robust and scalable backend for real-time inference, coupled with **SHAP** (SHapley Additive exPlanations) for model interpretability.
+The **Student Depression Prediction App** is an end-to-end Machine Learning project designed to predict the risk of depression among university students based on academic, psychological, and demographic factors. Built with **FastAPI** and a powerful **Stacking Ensemble**, this application provides a robust and scalable backend for real-time inference, coupled with **SHAP** for model interpretability.
 
+## Branches Overview
+This repository contains multiple branches representing different versions:
+
+- `main`: Initial version
+- `Version-2`: Updated deployment using multi-container architecture (Nginx + FastAPI)
+- `Version-3`: Integrated MLflow for experiment tracking and model management
+  
 ## Key Features
 - **Predictive Analytics**: High-accuracy Stacking Classifier combining Random Forest, XGBoost, and LightGBM for superior predictive performance.
 - **Model Explainability**: Integration with SHAP to translate black-box model predictions into actionable, human-readable insights for each individual prediction.
@@ -25,7 +32,7 @@ The **Student Depression Prediction App** is an end-to-end Machine Learning proj
 │   └── processed               # Auto-generated clean files for modeling
 ├── model                       # Serialized Stacking Classifier and SHAP explainer
 ├── src                         # Core logic and inference
-│   ├── pipelines                   # Modular ML pipeline (train, evaluate, save, pipeline)
+│   ├── pipelines               # Modular ML pipeline (train, evaluate, save, pipeline)
 │   └── deploy                  # Inference code (predict, schemas, logic_translator)
 ├── tests                       # Unit testing suite
 ├── static                      # Static Web User Interface (HTML/CSS/JS)
